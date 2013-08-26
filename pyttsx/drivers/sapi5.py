@@ -182,9 +182,9 @@ class SAPI5Driver(object):
             i += 1
             ### 特别注意一开始 self._textLength 的值可能是 0
             ### 经验值，根据字符长度推算时间: len(str) / 8
-            loop_times = 10 # 给个默认值
-            if self._textLength > 0:
-                loop_times = self._textLength / 8
+            loop_times = 0 # 给个默认值， 小于该值重算
+            if self._textLength > 0 and loop_times < 10:
+                loop_times = self._textLength / 5
             
             if i > loop_times:
                 self.endLoop()
