@@ -25,7 +25,7 @@ the flollowing recording function is added by hick(http://blog.HickWu.com):
 
    import pyttsx
    engine = pyttsx.init()
-   engine.rec(u'中文支持!')
+   engine.rec(u'中文支持!', 'hick.wav')
 
 Included drivers
 ================

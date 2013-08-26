@@ -73,7 +73,7 @@ class SAPI5Driver(object):
 
 
     ###HICK hack for rec
-    def rec(self, text):
+    def rec(self, text, out):
         self._textLength = len(text)
 
         self._proxy.setBusy(True)
@@ -82,7 +82,9 @@ class SAPI5Driver(object):
 
         ##### 以下区别于 say 用于记录语音成文件
         self._stream = win32com.client.Dispatch('SAPI.SpFileStream')
-        self._stream.Open("test.wav", 3) 
+        if out == None:
+            out = "out.wav"
+        self._stream.Open(out, 3) 
         self._tts.AudioOutputStream = self._stream
 
         self._tts.Speak(unicode(text), 19)

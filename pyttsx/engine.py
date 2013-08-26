@@ -117,8 +117,8 @@ class Engine(object):
 
 
     ###HICK: try to hack to recored
-    def rec(self, text, name=None):
-        self.proxy.rec(text, name)
+    def rec(self, text, file=None, name=None):
+        self.proxy.rec(text, file, name)
         self.runAndWaitRec()  # need this loop, or nothing will be recoreded
 
     def stop(self):

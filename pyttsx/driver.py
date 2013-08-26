@@ -148,7 +148,7 @@ class DriverProxy(object):
         self._push(self._driver.say, (text,), name)
 
     ###HICK hack for rec
-    def rec(self, text, name):
+    def rec(self, text, file, name):
         '''
         Called by the engine to push a say command onto the queue.
 
@@ -157,7 +157,7 @@ class DriverProxy(object):
         @param name: Name to associate with the utterance
         @type name: str
         '''
-        self._push(self._driver.rec, (text,), name)
+        self._push(self._driver.rec, (text, file), name)
 
     def stop(self):
         '''
