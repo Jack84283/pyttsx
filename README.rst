@@ -15,7 +15,7 @@ basic usage for speak text out:
    engine = pyttsx.init()
    engine.say('Greetings!')
    engine.say('How are you today?')
-   #engine.runAndWait() # this is need by the original version of pyttsx, but not for this version
+   #engine.runAndWait() #no nead for this version
 
 See http://pyttsx.readthedocs.org/ for documentation of the full API.
 
