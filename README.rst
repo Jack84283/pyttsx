@@ -7,15 +7,25 @@ Cross-platform Python wrapper for text-to-speech synthesis
 Quickstart
 ==========
 
+basic usage for speak text out:
+
 ::
 
    import pyttsx
    engine = pyttsx.init()
    engine.say('Greetings!')
    engine.say('How are you today?')
-   engine.runAndWait()
+   #engine.runAndWait() # this is need by the original version of pyttsx, but not for this version
 
 See http://pyttsx.readthedocs.org/ for documentation of the full API.
+
+the flollowing recording function is added by hick(http://blog.HickWu.com):
+
+::
+
+   import pyttsx
+   engine = pyttsx.init()
+   engine.rec(u'中文支持!')
 
 Included drivers
 ================
