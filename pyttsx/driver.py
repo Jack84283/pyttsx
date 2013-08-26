@@ -147,6 +147,18 @@ class DriverProxy(object):
         '''
         self._push(self._driver.say, (text,), name)
 
+    ###HICK hack for rec
+    def rec(self, text, name):
+        '''
+        Called by the engine to push a say command onto the queue.
+
+        @param text: Text to speak
+        @type text: unicode
+        @param name: Name to associate with the utterance
+        @type name: str
+        '''
+        self._push(self._driver.rec, (text,), name)
+
     def stop(self):
         '''
         Called by the engine to stop the current utterance and clear the queue
@@ -190,7 +202,18 @@ class DriverProxy(object):
         the queue at the start of the loop, and then exit the loop.
         '''
         self._push(self._engine.endLoop, tuple())
+
         self._driver.startLoop()
+
+    ###HICK: hack for recording
+    def runAndWaitRec(self):
+        '''
+        Called by the engine to start an event loop, process all commands in
+        the queue at the start of the loop, and then exit the loop.
+        '''
+        self._push(self._engine.endLoop, tuple())
+        self._driver.startLoopRec()
+
 
     def startLoop(self, useDriverLoop):
         '''

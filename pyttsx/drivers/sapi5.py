@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+
 '''
 SAPI 5+ driver.
 
@@ -55,6 +58,10 @@ class SAPI5Driver(object):
         self._rateWpm = 200
         self.setProperty('voice', self.getProperty('voice'))
 
+        # 记录文本长度: 主要是录音时决定录音循环时间等
+        self._textLength = 0
+
+
     def destroy(self):
         self._tts.EventInterests = 0
 
@@ -63,6 +70,27 @@ class SAPI5Driver(object):
         self._proxy.notify('started-utterance')
         self._speaking = True
         self._tts.Speak(unicode(text), 19)
+
+
+    ###HICK hack for rec
+    def rec(self, text):
+        self._textLength = len(text)
+
+        self._proxy.setBusy(True)
+        self._proxy.notify('started-utterance')
+        self._speaking = True
+
+        ##### 以下区别于 say 用于记录语音成文件
+        self._stream = win32com.client.Dispatch('SAPI.SpFileStream')
+        self._stream.Open("test.wav", 3) 
+        self._tts.AudioOutputStream = self._stream
+
+        self._tts.Speak(unicode(text), 19)
+
+    def close(self):
+        self._stream.Close()
+
+
 
     def stop(self):
         if not self._speaking:
@@ -115,14 +143,52 @@ class SAPI5Driver(object):
             raise KeyError('unknown property %s' % name)
 
     def startLoop(self):
+
+
         first = True
         self._looping = True
         while self._looping:
             if first:
                 self._proxy.setBusy(False)
                 first = False
+            ###HICK 问题的症结所在了，自打设置了 filestream 这里就没完没了了， 不过仍然没看懂这个循环是怎么结束的?
+            ###HICK 难道是执行到一定程度会抛出异常?  貌似是靠下面的 iterate ，在 driver.py 里有不断的调用它
             pythoncom.PumpWaitingMessages()
             time.sleep(0.05)
+
+
+    def startLoopRec(self):
+
+        ###HICK hack for rec
+        i = 0
+
+        ### 实际测试， startLoopRec 先于 rec 函数被调用。
+        first = True
+        self._looping = True
+        while self._looping:
+            if first:
+                self._proxy.setBusy(False)
+                first = False
+            ###HICK 问题的症结所在了，自打设置了 filestream 这里就没完没了了， 不过仍然没看懂这个循环是怎么结束的?
+            ###HICK 难道是执行到一定程度会抛出异常?  貌似是靠下面的 iterate ，在 driver.py 里有不断的调用它
+            pythoncom.PumpWaitingMessages()
+
+
+
+            ###HICK 经过测试，这里纯粹就是等待 tts 输出，调节目前 1s 比较合适。前面的 sleep 0.05秒，则合理 i == 20
+            ###HICK try to exit just after several loops
+            ### 实测取值跟文本长度相关，当然有些格式比如时间也不简单的是跟文本相关的
+            time.sleep(0.05)
+            i += 1
+            ### 特别注意一开始 self._textLength 的值可能是 0
+            ### 经验值，根据字符长度推算时间: len(str) / 8
+            loop_times = 10 # 给个默认值
+            if self._textLength > 0:
+                loop_times = self._textLength / 8
+            
+            if i > loop_times:
+                self.endLoop()
+
 
     def endLoop(self):
         self._looping = False

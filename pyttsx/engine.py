@@ -112,6 +112,14 @@ class Engine(object):
         @type name: str
         '''
         self.proxy.say(text, name)
+        ###HICK: there is no need to call it manually
+        self.runAndWait()
+
+
+    ###HICK: try to hack to recored
+    def rec(self, text, name=None):
+        self.proxy.rec(text, name)
+        self.runAndWaitRec()  # need this loop, or nothing will be recoreded
 
     def stop(self):
         '''
@@ -179,6 +187,14 @@ class Engine(object):
         self._inLoop = True
         self._driverLoop = True
         self.proxy.runAndWait()
+
+    ###HICK: hack for recording
+    def runAndWaitRec(self):
+        if self._inLoop:
+            raise RuntimeError('run loop already started')
+        self._inLoop = True
+        self._driverLoop = True
+        self.proxy.runAndWaitRec()
 
     def startLoop(self, useDriverLoop=True):
         '''
