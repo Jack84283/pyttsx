@@ -186,6 +186,7 @@ class SAPI5Driver(object):
             ### 经验值，根据字符长度推算时间: len(str) / 8
             loop_times = 0 # 给个默认值，
             if self._textLength > 0:
+                ###  if you wav file is not full,  change 5 in the line below to small number for more time to loop
                 loop_times = self._textLength / 5
                 # 不能太小了
                 if loop_times < 10:
